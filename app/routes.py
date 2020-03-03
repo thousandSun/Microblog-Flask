@@ -1,6 +1,6 @@
 from app import app
 from app.forms import LoginForm
-from flask import render_template, flash, redirect
+from flask import render_template, flash, redirect, url_for
 
 
 @app.route('/')
@@ -23,7 +23,10 @@ def index():
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     form = LoginForm()
+    # validates field data using validators provided in the form class
+    # returns true if everything checks out, false if something is missing
     if form.validate_on_submit():
+        # shows message confirming credentials, temp solution for logging in users
         flash(f'Login requested for user {form.username.data}, remember_me {form.remember_me.data}')
-        return redirect('/index')
+        return redirect(url_for('index'))
     return render_template('login.html', title='Sign In', form=form)
