@@ -1,6 +1,7 @@
 from app import app, db
 from app.forms import LoginForm, RegistrationForm
 from app.models import User
+from datetime import datetime
 from flask import render_template, flash, redirect, url_for, request
 from flask_login import current_user, login_user, logout_user, login_required
 from werkzeug.urls import url_parse
@@ -73,6 +74,7 @@ def register():
 
 
 # <username> is dynamic, whatever is passed here will be used as the parameter for the view function
+# to pass data into it, access by keyword argument e.g. username='susan'
 @app.route('/user/<username>')
 @login_required
 def user(username):
@@ -83,3 +85,11 @@ def user(username):
         {'author': user, 'body': 'test post #2'}
     ]
     return render_template('user.html', user=user, posts=posts)
+
+
+@app.before_request  # allows this function to be ran prior to the view function
+def before_request():
+    """sets the users last seen time prior to fulfilling a request"""
+    if current_user.is_authenticated:
+        current_user.last_seen = datetime.utcnow()
+        db.session.commit()

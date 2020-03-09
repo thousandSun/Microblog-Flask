@@ -1,6 +1,7 @@
 from app import db, login
 from datetime import datetime
 from flask_login import UserMixin
+from hashlib import md5
 from werkzeug.security import generate_password_hash, check_password_hash
 
 
@@ -15,6 +16,8 @@ class User(UserMixin, db.Model):  # SQLAlchemy class model must inherit
     # requires the name of the Class model instead of the database table
     # backref='author' means that each post will have a field such as post.author
     # that references back to the user that posted the post
+    about_me = db.Column(db.String(140))
+    last_seen = db.Column(db.DateTime, default=datetime.utcnow())
 
     def __repr__(self):
         return '<User {}>'.format(self.username)
@@ -28,6 +31,10 @@ class User(UserMixin, db.Model):  # SQLAlchemy class model must inherit
         """Uses werkzeug module to check the given password
         against the hash"""
         return check_password_hash(self.password_hash, password)
+
+    def avatar(self, size):
+        digest = md5(self.email.lower().encode('utf-8')).hexdigest()
+        return 'http://www.gravatar.com/avatar/{}?d=identicon&s={}'.format(digest, size)
 
 
 # required to load users that are already logged in without having to log in again
