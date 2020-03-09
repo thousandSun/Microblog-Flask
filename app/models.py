@@ -4,6 +4,7 @@ from flask_login import UserMixin
 from werkzeug.security import generate_password_hash, check_password_hash
 
 
+# UserMixin is used to allow the class model to work with Flask-Login
 class User(UserMixin, db.Model):  # SQLAlchemy class model must inherit
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(64), index=True, unique=True)
@@ -29,6 +30,7 @@ class User(UserMixin, db.Model):  # SQLAlchemy class model must inherit
         return check_password_hash(self.password_hash, password)
 
 
+# required to load users that are already logged in without having to log in again
 @login.user_loader
 def load_user(user_id):
     return User.query.get(int(user_id))

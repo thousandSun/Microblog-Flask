@@ -14,21 +14,22 @@ class LoginForm(FlaskForm):
 
 class RegistrationForm(FlaskForm):
     username = StringField('Username', validators=[DataRequired()])
+    # Email() validator checks to see if inputted email conforms to email structure
     email = StringField('Email', validators=[DataRequired(), Email()])
     password = PasswordField('Password', validators=[DataRequired()])
+    # EqualTo() validator takes another field name and validates if inputs match
     password2 = PasswordField('Repeat Password', validators=[DataRequired(), EqualTo('password')])
     submit = SubmitField('Register')
 
     # methods taking naming convention of `validate_<field>()`
     # are treated as independent validators for field
-    @staticmethod
-    def validate_user(username):
+    # validate methods needs the self parameter to function properly
+    def validate_username(self, username):
         user = User.query.filter_by(username=username.data).first()
         if user is not None:
             raise ValidationError('Please use a different username')
 
-    @staticmethod
-    def validate_email(email):
+    def validate_email(self, email):
         user = User.query.filter_by(email=email.data).first()
         if user is not None:
             raise ValidationError('Please use a different email address.')
