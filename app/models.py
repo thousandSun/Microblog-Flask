@@ -34,7 +34,7 @@ class User(UserMixin, db.Model):  # SQLAlchemy class model must inherit
 
     def avatar(self, size):
         digest = md5(self.email.lower().encode('utf-8')).hexdigest()
-        return 'http://www.gravatar.com/avatar/{}?d=identicon&s={}'.format(digest, size)
+        return 'https://www.gravatar.com/avatar/{}?d=identicon&s={}'.format(digest, size)
 
 
 # required to load users that are already logged in without having to log in again
